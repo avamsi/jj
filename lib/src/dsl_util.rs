@@ -393,8 +393,10 @@ where
 pub struct StringLiteralParser<R> {
     /// String content part.
     pub content_rule: R,
-    /// Escape sequence part including backslash character.
-    pub escape_rule: R,
+    /// String escape sequence part including backslash character.
+    pub string_escape_rule: R,
+    /// ANSI escape sequence part.
+    pub ansi_escape_rule: Option<R>,
 }
 
 impl<R: RuleType> StringLiteralParser<R> {
@@ -404,7 +406,7 @@ impl<R: RuleType> StringLiteralParser<R> {
         for part in pairs {
             if part.as_rule() == self.content_rule {
                 result.push_str(part.as_str());
-            } else if part.as_rule() == self.escape_rule {
+            } else if part.as_rule() == self.string_escape_rule {
                 match &part.as_str()[1..] {
                     "\"" => result.push('"'),
                     "\\" => result.push('\\'),
@@ -414,6 +416,8 @@ impl<R: RuleType> StringLiteralParser<R> {
                     "0" => result.push('\0'),
                     char => panic!("invalid escape: \\{char:?}"),
                 }
+            } else if Some(part.as_rule()) == self.ansi_escape_rule {
+                result.push('\x1b');
             } else {
                 panic!("unexpected part of string: {part:?}");
             }

@@ -52,7 +52,8 @@ struct RevsetParser;
 
 const STRING_LITERAL_PARSER: StringLiteralParser<Rule> = StringLiteralParser {
     content_rule: Rule::string_content,
-    escape_rule: Rule::string_escape,
+    string_escape_rule: Rule::string_escape,
+    ansi_escape_rule: None,
 };
 
 impl Rule {

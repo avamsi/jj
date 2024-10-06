@@ -47,7 +47,8 @@ struct TemplateParser;
 
 const STRING_LITERAL_PARSER: StringLiteralParser<Rule> = StringLiteralParser {
     content_rule: Rule::string_content,
-    escape_rule: Rule::string_escape,
+    string_escape_rule: Rule::string_escape,
+    ansi_escape_rule: Some(Rule::ansi_escape),
 };
 
 impl Rule {
@@ -55,6 +56,7 @@ impl Rule {
         match self {
             Rule::EOI => None,
             Rule::whitespace => None,
+            Rule::ansi_escape => None,
             Rule::string_escape => None,
             Rule::string_content_char => None,
             Rule::string_content => None,
